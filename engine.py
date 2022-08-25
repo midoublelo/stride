@@ -1,6 +1,5 @@
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from pprint import pprint
 
 CLIENT_ID = "ENTER CLIENT ID"
 CLIENT_SECRET = "ENTER CLIENT SECRET"
