@@ -7,7 +7,7 @@ from rich.table import Table
 
 APPNAME = "stride."
 while True:
-    option = Prompt.ask("select option/category (exit to close)", choices=["all", "emotion", "tempo", "volume", "energy", "length", "exit"], default="all")
+    option = Prompt.ask("select option/category (exit to close)", choices=["all", "playlist", "emotion", "tempo", "volume", "energy", "length", "exit"], default="all")
     if option == "all":
         allRecommendations = Table(title="all recommendations.")
         allRecommendations.add_column("artist.")
@@ -17,6 +17,16 @@ while True:
         for i in range(len(engine.songs)):
             allRecommendations.add_row(artists[i], titles[i])
         mainScreen = Panel(allRecommendations, title=f"{APPNAME}")
+    if option == "playlist":
+        allRecommendations = Table(title="all recommendations.")
+        allRecommendations.add_column("artist.")
+        allRecommendations.add_column("title.")
+        artists = list(engine.songs.keys())
+        titles = list(engine.songs.values())
+        for i in range(len(engine.songs)):
+            allRecommendations.add_row(artists[i], titles[i])
+        mainScreen = Panel(allRecommendations, title=f"{APPNAME}")
+        engine.createPlaylist()
     elif option == "emotion":
         emotionRecommendations = Table(title="emotion recommendations.")
         emotionRecommendations.add_column("artist.")
