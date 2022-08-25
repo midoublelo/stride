@@ -14,13 +14,15 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=CLIENT_ID,
                                                redirect_uri="http://localhost:8888/callback",
                                                scope="user-top-read playlist-modify-public playlist-modify-private"))
 
-artistResult = sp.current_user_top_artists(time_range="short_term", limit=19)
-for i in range(19):
-    topArtists = []
-    for i, item in enumerate(artistResult['items']):
-        topArtists.append(item['id'])
+def generateRecommendations():
+    artistResult = sp.current_user_top_artists(time_range="short_term", limit=19)
+    for i in range(19):
+        topArtists = []
+        for i, item in enumerate(artistResult['items']):
+            topArtists.append(item['id'])
+    return sp.recommendations(seed_artists=topArtists[0:5], limit=25)
 
-overallRecommendations = sp.recommendations(seed_artists=topArtists[0:5], limit=25)
+overallRecommendations = generateRecommendations()
 recommendedTID = []
 songs = {}
 for track in overallRecommendations['tracks']:
