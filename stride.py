@@ -7,7 +7,7 @@ from rich.table import Table
 
 APPNAME = "stride."
 while True:
-    option = Prompt.ask("select option/category (exit to close)", choices=["all", "playlist", "emotion", "tempo", "volume", "energy", "length", "exit"], default="all")
+    option = Prompt.ask("select option/category (exit to close)", choices=["all", "playlist", "regen", "emotion", "tempo", "volume", "energy", "length", "exit"], default="all")
     if option == "all":
         allRecommendations = Table(title="all recommendations.")
         allRecommendations.add_column("artist.")
@@ -27,6 +27,9 @@ while True:
             allRecommendations.add_row(artists[i], titles[i])
         mainScreen = Panel(allRecommendations, title=f"{APPNAME}")
         engine.createPlaylist()
+    if option == "regen":
+        engine.generateRecommendations()
+        mainScreen = Panel("regenerated recommendations.", title=f"{APPNAME}")
     elif option == "emotion":
         emotionRecommendations = Table(title="emotion recommendations.")
         emotionRecommendations.add_column("artist.")
