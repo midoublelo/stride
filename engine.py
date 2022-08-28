@@ -15,19 +15,22 @@ sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=CLIENT_ID,
                                                scope="user-top-read playlist-modify-public playlist-modify-private"))
 
 def generateRecommendations():
+    global recommendedTID
+    global songs
     artistResult = sp.current_user_top_artists(time_range="short_term", limit=19)
     for i in range(19):
         topArtists = []
         for i, item in enumerate(artistResult['items']):
             topArtists.append(item['id'])
-    return sp.recommendations(seed_artists=topArtists[0:5], limit=25)
+    overallRecommendations = sp.recommendations(seed_artists=topArtists[0:5], limit=25)
+    recommendedTID = []
+    songs = {}
+    for track in overallRecommendations['tracks']:
+        recommendedTID.append(track['uri'])
+        songs[f"{track['artists'][0]['name']}"] = f"{track['name']}"
 
-overallRecommendations = generateRecommendations()
-recommendedTID = []
-songs = {}
-for track in overallRecommendations['tracks']:
-    recommendedTID.append(track['uri'])
-    songs[f"{track['artists'][0]['name']}"] = f"{track['name']}"
+generateRecommendations()
+
 recommendedFeatures = sp.audio_features(tracks=recommendedTID)
 
 happySong = max(recommendedFeatures, key=lambda ev: ev['valence'])
@@ -52,9 +55,9 @@ def createPlaylist():
             if playlists['items'][i]['name'] == PLAYLIST_FORMAT['name']:
                 if playlists['items'][i]['description'] == PLAYLIST_FORMAT['description']:
                     sp.user_playlist_replace_tracks(user_id, playlists['items'][i]['id'], recommendedTID)
-                    print("Updated playlist.")
+                    print("updated spotify playlist.")
                     break
         else:
             playlist = sp.user_playlist_create(user_id, PLAYLIST_FORMAT['name'], public=True, description=PLAYLIST_FORMAT['description'])
             sp.user_playlist_add_tracks(user_id, playlist["id"], recommendedTID)
-            print("Created playlist.")
+            print("created new spotify playlist.")
